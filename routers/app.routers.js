@@ -9,7 +9,7 @@ const router = express.Router();
 router.use("/api", apiRoutes);
 
 router.get("/", async (req, res) => {
-  const user = await req.user;
+  const user = req.user;
   if (user) {
     return res.redirect("/profile");
   } else {
@@ -26,7 +26,7 @@ router.get("/logout", auth, (req, res, next) => {
   req.logOut((done) => {
     console.log(" User Logged Out");
     res.redirect("/");
-    done();
+    // done();
   });
 });
 

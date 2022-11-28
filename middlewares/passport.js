@@ -1,15 +1,18 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
-const User = require("../models/daos/Users.dao");
+const UserDao = require("../models/daos/Users.dao");
 const { formatUserForDB } = require("../utils/users.utils");
+
+const User = new UserDao();
 
 const salt = () => bcrypt.genSaltSync(10);
 const createHash = (password) => bcrypt.hashSync(password, salt());
 const isValidPassword = (user, password) =>
   bcrypt.compareSync(password, user.password);
 // Passport  Local Strategy
-//Singup
+
+//Sing up
 passport.use(
   "signup",
   new LocalStrategy(
@@ -19,25 +22,26 @@ passport.use(
     async (req, username, password, done) => {
       try {
         const userItem = {
-          firtname: req.body.firtname,
+          firstname: req.body.firstname,
           lastname: req.body.lastname,
           birthdate: req.body.birthdate,
           email: username,
           password: createHash(password),
         };
+        console.log(userItem);
         const newUser = formatUserForDB(userItem);
         const user = await User.createUser(newUser);
-        console.log("Registration success");
+        console.log("User registration successful");
         return done(null, user);
       } catch (error) {
-        console.log("Error singing user");
+        console.log("Error singing user up...");
         return done(error);
       }
     }
   )
 );
 
-// Singin
+// Sign in
 
 passport.use(
   "signin",
@@ -55,14 +59,17 @@ passport.use(
     }
   })
 );
+
 //serialization
 passport.serializeUser((user, done) => {
+  console.log("Inside serializer");
   done(null, user._id);
 });
 
 //deserialization
 
 passport.deserializeUser(async (id, done) => {
+  console.log("Inside DEserializer");
   const user = await User.getById(id);
   done(null, user);
 });

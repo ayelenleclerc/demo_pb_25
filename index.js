@@ -1,7 +1,6 @@
 const express = require("express");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
-const mongoose = require("mongoose");
 const passport = require("./middlewares/passport");
 
 const env = require("./env.config");
